@@ -272,8 +272,8 @@ button:hover {
 
 .task {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: top;
+    gap: 12px;
 }
 
 .task input {
@@ -288,7 +288,7 @@ button:hover {
     margin: 0 10px;
 }
 
-.completed p {
+.completed div.taskbox {
     color: var(--teal);
     text-decoration: line-through;
 }
@@ -297,4 +297,15 @@ button:hover {
     color: red;
     font-size: 20px;
     text-align: center;
+}
+
+#title {
+    font-size: 20px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+#description {
+    font-size: 15px;
+    text-align: left;
 }

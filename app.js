@@ -15,20 +15,37 @@ const savedTasks = () => {
 
 const addTask = () => {
     const taskInput = document.getElementById("taskInput").value;
+    const taskDescription = document.getElementById("Description").value;
+    const taskDate = document.getElementById("dueDate").value;
+
     if (!taskInput) {
         alert("Task cannot be empty");
         return;
     }
-
+    
     if (taskInput.trim() === "") {
         alert("Task cannot be empty");
         return;
     }
-
+    
     const task = {
         title: taskInput,
+        description: taskDescription,
+        dueDate: taskDate,
         completed: false
     };
+
+    if (taskDescription) {
+        task.description = taskDescription;
+    } else {
+        task.description = "";
+    }
+
+    if (taskDate) {
+        task.dueDate = taskDate;
+    } else {
+        task.dueDate = null;
+    }
 
     tasks.push(task);
     displayTasks();
@@ -40,6 +57,7 @@ const addTask = () => {
 
 const clearInput = () => {
     document.getElementById("taskInput").value = "";
+    document.getElementById("Description").value = "";
 }
 
 const deleteTask = (index) => {
@@ -52,8 +70,11 @@ const deleteTask = (index) => {
 
 const editTask = (index) => {
     const taskInput = document.getElementById("taskInput").value = tasks[index].title;
+    const taskDescription = document.getElementById("Description").value = tasks[index].description;
+    document.getElementById("dueDate").value = tasks[index].dueDate;
+    document.getElementById("Description").focus();
     document.getElementById("taskInput").focus();
-    togglePopup(taskInput);
+    togglePopup(taskInput, taskDescription);
     tasks.splice(index, 1);
     displayTasks();
     updateStats();
@@ -78,7 +99,11 @@ const displayTasks = () => {
             <div class="taskItem">
                 <div class="task ${task.completed ? 'completed' : ''}">
                   <input type="checkbox" class="checkbox" ${task.completed? 'checked' : ''}>
-                  <p>${task.title}</p>
+                  <div class="taskbox">
+                    <h3 id="title">${task.title}</h3>
+                    <p id="description">${task.description}</p>
+                    <p id="dueDate">${task.dueDate? `Due: ${task.dueDate}` : ''}</p>
+                  </div>
                 </div>
                 <div class="icons">
                     <img src="images/edit2.png" onClick="editTask(${index})"/>
