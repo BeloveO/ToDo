@@ -13,10 +13,12 @@ const savedTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
+
 const addTask = () => {
     const taskInput = document.getElementById("taskInput").value;
     const taskDescription = document.getElementById("Description").value;
     const taskDate = document.getElementById("dueDate").value;
+    const taskDueDate = new Date(taskDate).toDateString();
 
     if (!taskInput) {
         alert("Task cannot be empty");
@@ -31,7 +33,7 @@ const addTask = () => {
     const task = {
         title: taskInput,
         description: taskDescription,
-        dueDate: taskDate,
+        dueDate: taskDueDate,
         completed: false
     };
 
@@ -42,7 +44,7 @@ const addTask = () => {
     }
 
     if (taskDate) {
-        task.dueDate = taskDate;
+        task.dueDate = taskDueDate;
     } else {
         task.dueDate = null;
     }
@@ -71,7 +73,7 @@ const deleteTask = (index) => {
 const editTask = (index) => {
     const taskInput = document.getElementById("taskInput").value = tasks[index].title;
     const taskDescription = document.getElementById("Description").value = tasks[index].description;
-    document.getElementById("dueDate").value = tasks[index].dueDate;
+    const taskDate = document.getElementById("dueDate").value = tasks[index].dueDate;
     document.getElementById("Description").focus();
     document.getElementById("taskInput").focus();
     togglePopup(taskInput, taskDescription);
@@ -177,4 +179,111 @@ const blastConfetti = () => {
         particleCount: randomInRange(50, 100),
         origin: { y: 0.6 },
       });
+}
+
+// All tasks
+
+function allTasksBtn() {
+    allTasks();
+}
+
+const allTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    displayTasks();
+    updateStats();
+    savedTasks = tasks;
+}
+
+// Filter tasks based on due date
+
+function todayTasksBtn() {
+    todayTasks();
+}
+
+const todayTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    const todayTasks = tasks.filter(task => task.dueDate === null ||  task.dueDate === new Date().toDateString());
+    tasks = todayTasks;
+    displayTasks();
+    updateStats();
+    savedTasks = todayTasks;
+}
+
+function upcomingTasksBtn() {
+    upcomingTasks();
+}
+
+const upcomingTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    const upcomingTasks = tasks.filter(task => task.dueDate > new Date().toDateString());
+    tasks = upcomingTasks;
+    displayTasks();
+    updateStats();
+}
+
+// Filter tasks based on completed status
+
+function completedTasksBtn() {
+    completedTasks();
+}
+
+const completedTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    const completedTasks = tasks.filter(task => task.completed);
+    tasks = completedTasks;
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <div class="taskComplete">
+                <div class="task-completed">
+                    <h3 id="title">${task.title}</h3>
+                    <p id="description">${task.description}</p>
+                    <p id="dueDate">${task.dueDate? `Due: ${task.dueDate}` : ''}</p>
+                </div>
+            </div>
+        `;
+
+        taskList.appendChild(listItem);
+    });
+    updateStats();
+    savedTasks = completedTasks; completed
+}
+
+function overdueTasksBtn() {
+    overdueTasks();
+}
+
+const overdueTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    const overdueTasks = tasks.filter(task => task.dueDate < new Date().toDateString() && task.completed === false);
+    tasks = overdueTasks;
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <div class="taskItem">
+                <div class="task ${task.completed ? 'completed' : ''}">
+                  <input type="checkbox" class="checkbox" ${task.completed? 'checked' : ''}>
+                  <div class="taskbox">
+                    <h3 id="title">${task.title}</h3>
+                    <p id="description">${task.description}</p>
+                    <p id="dueDate">${task.dueDate? `Due: ${task.dueDate}` : ''}</p>
+                  </div>
+                </div>
+                <div class="icons">
+                    <img src="images/edit2.png" onClick="editTask(${index})"/>
+                    <img src="images/delete2.png" onClick="deleteTask(${index})"/>
+                </div>
+            </div>
+        `;
+
+        listItem.addEventListener('change', ()=> toggleTaskComplete(index));
+        taskList.appendChild(listItem);
+    })
+    updateStats();
 }
