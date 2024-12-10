@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogIn</title>
+    <link rel="stylesheet" href="/signup.css">
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Log In</h1>
+        <p id="error-message"></p>
+        <form id="form" action="/login" method="post">
+            <div >
+                <label for="email-input">
+                    <span>@</span>
+                </label>
+                <input type="email" name="email" id="email-input" placeholder="Email">
+            </div>
+            <div>
+                <label for="password-input">
+                    <img src="../images/password.png" height="24px" width="24px">
+                </label>
+                <input type="password" name="password" id="password-input" placeholder="Password">
+            </div>
+            <button type="submit" onclick="">Login</button>
+        </form>
+        <p>
+            or login with provider
+        </p>
+        <button class="sign" onClick="{() => signIn('google', {callbackUrl: '/'})}">
+            <img src="../images/google.png" height="24px" width="24px"/>
+            Login with Google
+        </button>
+        <p class="down">New here? <a href="/signup">Create an account</a></p>
+        
+    </div>
+    <script type="text/javascript" defer>
+        const form = document.getElementById('form');
+        const name_input = document.getElementById('name-input');
+        const email_input = document.getElementById('email-input');
+        const password_input = document.getElementById('password-input');
+        const confirm_password_input = document.getElementById('confirm-password-input');
+        const error_message = document.getElementById('error-message');
+
+        // Event listeners
+        form.addEventListener('submit', (e) => {
+
+            let errors = [];
+            if (!name_input) {
+                errors = getLogInFormErrors(email_input.value, password_input.value);
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                error_message.innerHTML = errors.join('<br>');
+            }
+        });
+
+
+        function getLogInFormErrors(email, password) {
+            let errors = [];
+
+            if (!email) {
+                errors.push('Email is required');
+                email_input.parentElement.classList.add('error');
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                errors.push('Invalid email format');
+                email_input.parentElement.classList.add('error');
+            }
+
+            if (!password) {
+                errors.push('Password is required');
+                password_input.parentElement.classList.add('error');
+            } 
+
+            return errors;
+        };
+
+
+        const allInputs = [name_input, email_input, password_input, confirm_password_input].filter(input => input !== null);
+
+
+        allInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                input.parentElement.classList.remove('error');
+                error_message.innerHTML = '';
+            });
+        });
+
+    </script> 
+</body>
+</html>

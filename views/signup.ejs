@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp</title>
+    <link rel="stylesheet" href="/signup.css">
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Sign Up</h1>
+        <p id="error-message"></p>
+        <form action="/signup" method="post" id="form">
+            <div>
+                <label for="name-input">
+                    <img src="/images/account.png" height="24px" width="24px">
+                </label>
+                <input type="text" name="name" id="name-input" placeholder="Name">
+            </div>
+            <div >
+                <label for="email-input">
+                    <span>@</span>
+                </label>
+                <input type="email" name="email" id="email-input" placeholder="Email" unique="true">
+            </div>
+            <div>
+                <label for="password-input">
+                    <img src="/images/password.png" height="24px" width="24px">
+                </label>
+                <input type="password" name="password" id="password-input" placeholder="Password">
+            </div>
+            <div>
+                <label for="confirm-password-input">
+                    <img src="/images/password.png" height="24px" width="24px">
+                </label>
+                <input type="password" name="confirmPassword" id="confirm-password-input" placeholder="Confirm Password">
+            </div>
+            <button type="submit" onclick="">Sign Up</button>
+        </form>
+        <p>
+            or login with provider
+        </p>
+        <button class="sign" onClick="{() => signIn('google', {callbackUrl: '/'})}">
+            <img src="/images/google.png" height="24px" width="24px"/>
+            Login with Google
+        </button>
+        <p>
+            By clicking Sign Up, you agree to our <a href="#">Terms and Conditions.</a>
+        </p>
+        <p class="down">Already have an account? <a href="/">Login</a></p>
+        
+    </div>
+    <script type="text/javascript">
+        const form = document.getElementById('form');
+        const name_input = document.getElementById('name-input');
+        const email_input = document.getElementById('email-input');
+        const password_input = document.getElementById('password-input');
+        const confirm_password_input = document.getElementById('confirm-password-input');
+        const error_message = document.getElementById('error-message');
+
+        // Event listeners
+        form.addEventListener('submit', (e) => {
+
+            let errors = [];
+            if (name_input) {
+                errors = getSignUpFormErrors(name_input.value, email_input.value, password_input.value, confirm_password_input.value);
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                error_message.innerHTML = errors.join('<br>');
+            }
+        });
+
+        function getSignUpFormErrors(name, email, password, confirm_password) {
+            let errors = [];
+
+            if (!name) {
+                errors.push('Name is required');
+                name_input.parentElement.classList.add('error');
+            }
+
+            if (!email) {
+                errors.push('Email is required');
+                email_input.parentElement.classList.add('error');
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                errors.push('Invalid email format');
+                email_input.parentElement.classList.add('error');
+            }
+
+            if (!password) {
+                errors.push('Password is required');
+                password_input.parentElement.classList.add('error');
+            }
+
+            if (password.length < 8) {
+                errors.push('Password must be at least 8 characters long');
+                password_input.parentElement.classList.add('error');
+                confirm_password_input.parentElement.classList.add('error');
+            }
+
+            if (!confirm_password) {
+                errors.push('Confirm password is required');
+                confirm_password_input.parentElement.classList.add('error');
+            } else if (password!== confirm_password) {
+                errors.push('Passwords do not match');
+                password_input.parentElement.classList.add('error');
+                confirm_password_input.parentElement.classList.add('error');
+            }
+
+            return errors;
+        };
+
+
+        const allInputs = [name_input, email_input, password_input, confirm_password_input].filter(input => input !== null);
+
+
+        allInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                input.parentElement.classList.remove('error');
+                error_message.innerHTML = '';
+            });
+        });
+
+    </script>
+</body>
+</html>
